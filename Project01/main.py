@@ -1,4 +1,3 @@
-from turtle import up
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -106,7 +105,7 @@ if files:
         list_file, 
         columns=['File Path']
     )
-    st.dataframe(df_image)
+    st.dataframe(list_file)
     # for file in files:
     #     path_image = os.path.join('uploads', file)
     #     st.image(path_image, width=300)
