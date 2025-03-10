@@ -77,35 +77,39 @@ if show_demo_data_MultiselectBox:
 #.streamlit/config.toml
 st.write(st.secrets)
 
-st.title("Upload File")
-upload_file = st.file_uploader("Select a file", type=["png", 'jpg', 'jfif'])
-if upload_file:    
-    st.write(f"""
-    * file_id:{upload_file.file_id}
-    * name:{upload_file.name}
-    * size:{upload_file.size}
-    * _file_urls:{upload_file._file_urls}
-    """)
+show_demo_uploadFile = st.toggle("Show Upload File Demo")
+if show_demo_uploadFile:
+    st.title("Upload File")
+    upload_file = st.file_uploader("Select a file", type=["png", 'jpg', 'jfif'],accept_multiple_files=True)
+    if upload_file:    
+        for file in upload_file:
+            st.write(f"""
+        * file_id:{file.file_id}
+        * name:{file.name}
+        * size:{file.size}
+        * _file_urls:{file._file_urls}
+        """)
 
-import os
-os.makedirs('uploads', exist_ok=True)
-if upload_file is not None:
-    file_path = os.path.join("uploads", upload_file.name)
-    with open(file_path, 'wb') as f:
-        f.write(upload_file.getbuffer())
+    import os
+    os.makedirs('uploads', exist_ok=True)
+    if upload_file is not None:
+        for file in upload_file:
+            file_path = os.path.join("uploads", file.name)
+            with open(file_path, 'wb') as f:
+                f.write(file.getbuffer())
 
-    st.success(file_path)
+            st.success(file_path)
 
-files = os.listdir('uploads')
-width_image = st.slider("Width image:", 1, 1000, 200, 10)
-if files:
-    list_file = [os.path.join('uploads', file) for file in files]
-    st.image(list_file, width=width_image)
-    df_image = pd.DataFrame(
-        list_file, 
-        columns=['File Path']
-    )
-    st.dataframe(list_file)
-    # for file in files:
-    #     path_image = os.path.join('uploads', file)
-    #     st.image(path_image, width=300)
+    files = os.listdir('uploads')
+    width_image = st.slider("Width image:", 1, 1000, 200, 10)
+    if files:
+        list_file = [os.path.join('uploads', file) for file in files]
+        st.image(list_file, width=width_image)
+        df_image = pd.DataFrame(
+            list_file, 
+            columns=['File Path']
+        )
+        st.dataframe(list_file)
+        # for file in files:
+        #     path_image = os.path.join('uploads', file)
+        #     st.image(path_image, width=300)
