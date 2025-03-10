@@ -2,13 +2,26 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import time
+import matplotlib.pyplot as plt
+
 np.random.seed(37)
-st.set_page_config(layout="wide")
+st.set_page_config(layout="centered", page_title='Hello World!', page_icon='😶')
 
-st.header("DataFame")
+with st.sidebar:
+    show_demo_data_frame = st.toggle("Data Frame Demo")
+    show_demo_data_slider = st.toggle("Slider Demo")
+    show_demo_data_LineChart = st.toggle("Line Chart Demo")
+    show_demo_data_Help = st.toggle("Help Demo")
+    show_demo_data_selectBox = st.toggle("Select Box Demo")
+    show_demo_data_MultiselectBox = st.checkbox("MultiselectBox Demo")
+    show_demo_uploadFile = st.toggle("Upload File Demo")
+    demo_uploadFile02 = st.toggle("Upload a csv file Demo")
+    demo_progress = st.toggle("Progress demo:")
+    demo_form = st.toggle("Form Demo")
 
-show_demo_data_frame = st.toggle("Show data frame?")
 if show_demo_data_frame:
+    st.header("DataFame")
     df = pd.DataFrame(
         {
             'Column 1': np.random.randint(0, 10, size = 10), 
@@ -20,17 +33,15 @@ if show_demo_data_frame:
     arr = np.random.randn(200, 10)
     st.write(arr)
 
-st.header("Slider")
-show_demo_data_slider = st.toggle("Show Slider?")
 if show_demo_data_slider:
+    st.header("Slider")
     my_date1 = st.slider('x1 = ', datetime(2025, 10, 3), datetime(2030, 1, 1))
     my_date2 = st.slider('x2 = ', 0, 100, format='hi %d')
 
     st.write(my_date1, my_date2)
 
-st.header("Line Chart")
-show_demo_data_LineChart = st.toggle("Show Line Chart?")
 if show_demo_data_LineChart:
+    st.header("Line Chart")
     data2 = pd.DataFrame(
         # np.random.randint(0, 100, (30, 2)),
         np.random.randn(10, 2),
@@ -39,14 +50,12 @@ if show_demo_data_LineChart:
     st.write(data2)
     st.line_chart(data2, color=['#ff0000', '#00ffdd'])
 
-st.header("Help")
-show_demo_data_Help = st.toggle("Show Help?")
 if show_demo_data_Help:
+    st.header("Help")
     st.help(st.line_chart)
 
-st.header("Select Box")
-show_demo_data_selectBox = st.toggle("Show Select Box?")
 if show_demo_data_selectBox:
+    st.header("Select Box")
     option = st.selectbox(
         "Select Box", 
         [f"Box {i} 😶"for i in range(1, 10)]
@@ -62,9 +71,8 @@ if show_demo_data_selectBox:
     st.write(selected_column)
     st.line_chart(data3, x = None, y=selected_column)
 
-st.header("Multiselect Box")
-show_demo_data_MultiselectBox = st.checkbox("Show MultiselectBox?")
 if show_demo_data_MultiselectBox:
+    st.header("Multiselect Box")
     m_select = st.multiselect(
         "What is your age?",
         range(1, 100)
@@ -77,7 +85,6 @@ if show_demo_data_MultiselectBox:
 #.streamlit/config.toml
 st.write(st.secrets)
 
-show_demo_uploadFile = st.toggle("Show Upload File Demo")
 if show_demo_uploadFile:
     st.title("Upload File")
     upload_file = st.file_uploader("Select a file", type=["png", 'jpg', 'jfif'],accept_multiple_files=True)
@@ -113,3 +120,63 @@ if show_demo_uploadFile:
         # for file in files:
         #     path_image = os.path.join('uploads', file)
         #     st.image(path_image, width=300)
+
+if demo_uploadFile02:
+    file = st.file_uploader("Select a csv file", type=['csv'])
+    
+    if file is None: st.stop()
+    st.write(file.type)
+    df = pd.read_csv(file)
+    select_remove = st.multiselect("Select filter", df.columns)
+    df_review = pd.DataFrame()
+    for col in df.columns:
+        if col not in select_remove:
+            df_review[col] = (df[col])
+    # st.dataframe(df[selects] if len(selects) > 0 else df)
+    st.dataframe(df_review, height=300)
+
+with st.expander("Preview Data"):
+    st.write("Demo Data Preview")
+    df = pd.DataFrame(np.random.randn(20, 4), columns=['A', 'B', 'C', 'D'])
+    st.dataframe(df)
+    st.line_chart(df)
+
+if demo_progress:
+    my_progress = st.progress(0, 'Progress Hello World!')
+    btn_start = st.button('Start 😆')
+    if btn_start:
+        for i in range(0, 100 + 1, 10):
+            my_progress.progress(i, f'{i} %')
+            time.sleep(1)
+    
+    with st.status('Running for something...'):
+        for i in range(10):
+            st.write(f'Running Process {i}')
+            time.sleep(.2)
+    with st.status('Running 2...'):
+        st.write('ZZZ')
+        time.sleep(1)
+        st.write('ZZZ1')
+        time.sleep(1)
+        st.write('ZZZ2')
+        time.sleep(1)
+        st.write('ZZZ3')
+        time.sleep(1)
+
+if demo_form:
+    with st.form('form login'):
+        username = st.text_input('Username')
+        password = st.text_input('Password')
+
+        btn_submitted = st.form_submit_button('Login', type='primary')
+    if btn_submitted:
+        st.write(username, '-', password)
+st.query_params
+# st.help(st.query_params)
+
+x = np.random.rand(100, 1)
+
+plt.figure()
+plt.plot(x, '.')
+plt.grid(True)
+st.pyplot(plt)
