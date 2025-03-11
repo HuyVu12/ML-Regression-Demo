@@ -1,3 +1,4 @@
+from turtle import width
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,17 +13,23 @@ if 'y' not in session: session['y'] = np.array([1, 2, 4, 2, 7])
 
 st.header("ML Regression 😶")
 
-plt.figure()
-plt.plot(session['x'], session['y'], '.')
+# plt.figure()
+# plt.plot(session['x'], session['y'], '.')
+
 
 df = pd.DataFrame()
 df['x'] = session['x']
 df['y'] = session['y']
 col1, col2, col3 = st.columns((1, 1, 1))
 with col1:
-    st.pyplot(plt)
+    echo_plt = st.empty()
+    with echo_plt:
+        fig, ax = plt.subplots(figsize=(5, 4))
+        ax.plot(session['x'], session['y'], '.')
+        st.pyplot(fig)
 with col2:
     with st.expander('Data information'):
+        #file = st.file_uploader("Add file csv", type=['csv'])
         st.dataframe(df)
         with st.form('Form Data'):
             x_input = st.number_input('x value')
@@ -76,5 +83,5 @@ with col3:
             plt.title(f'MSE = {mse}')
 
             plt.plot(x_plot, y_plot, 'r-')
-            st.pyplot(plt)
+            echo_plt.pyplot(plt)
 
