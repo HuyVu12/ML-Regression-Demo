@@ -12,9 +12,6 @@ if 'y' not in session: session['y'] = np.array([1, 2, 4, 2, 7])
 
 st.header("ML Regression 😶")
 
-# plt.figure()
-# plt.plot(session['x'], session['y'], '.')
-
 
 df = pd.DataFrame()
 df['x'] = session['x']
@@ -23,16 +20,29 @@ col1, col2, col3 = st.columns((1, 1, 1))
 with col1:
     echo_plt = st.empty()
     with echo_plt:
-        fig, ax = plt.subplots(figsize=(5, 4))
-        ax.plot(session['x'], session['y'], '.')
-        st.pyplot(fig)
+        plt.figure()
+        plt.grid(True)
+        plt.plot(session['x'], session['y'], '.')
+        st.pyplot(plt)
 with col2:
     with st.expander('Data information'):
         #file = st.file_uploader("Add file csv", type=['csv'])
-        st.dataframe(df)
+        edit_df = st.data_editor(df)
+        if sum(np.array(edit_df['x']) - session['x']) != 0 or sum(np.array(edit_df['y']) - session['y']) != 0 :
+            session['x'] = np.array(edit_df['x'])
+            session['y'] = np.array(edit_df['y'])
+            st.rerun()
+            # plt.figure()
+            # plt.plot(session['x'], session['y'], '.')
+            # plt.grid(True)
+            # echo_plt.pyplot(plt)
+            
         with st.form('Form Data'):
-            x_input = st.number_input('x value')
-            y_input = st.number_input('y value')
+            c1, c2 = st.columns((1, 1))
+            with c1:
+                x_input = st.number_input('x value')
+            with c2:
+                y_input = st.number_input('y value')
 
             submit_btn = st.form_submit_button()
         if submit_btn:
@@ -79,8 +89,9 @@ with col3:
                 yi = predict(session['model_arg'], session["theta"], session['x'][i])
                 mse += (yi - session['y'][i])**2
             mse /= len(session['y'])
+            
+            plt.grid(True)
             plt.title(f'MSE = {mse}')
-
             plt.plot(x_plot, y_plot, 'r-')
             echo_plt.pyplot(plt)
 
