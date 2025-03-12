@@ -45,9 +45,15 @@ with col2:
                 y_input = st.number_input('y value')
 
             submit_btn = st.form_submit_button()
+            
         if submit_btn:
             session['x'] = np.append(session['x'], [x_input])
             session['y'] = np.append(session['y'], [y_input])
+            st.rerun()
+        reset_btn = st.button("Reset", type='primary')
+        if reset_btn: 
+            session['x'] = np.array([])
+            session['y'] = np.array([])
             st.rerun()
 with col3:
     with st.expander('Model information'):
@@ -69,7 +75,7 @@ with col3:
         st.latex(
             session['str_latex']
         )
-        if len(session['model_arg'].split()) != 0:
+        if len(session['model_arg'].split()) != 0 and len(session['x']) > 0:
             if 'theta' not in session: session["theta"] = 0
             session["theta"] = calc_model(session['model_arg'], session['x'], session['y'])
             st.write(session["theta"])
